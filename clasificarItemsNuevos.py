@@ -55,6 +55,10 @@ if __name__ == '__main__':
     y_test=pd.DataFrame()
     testX = pd.read_csv(iFile)
 
+    # BORRO la columna de Especie, ya que mi modelo no acepta la clase a predecir Especie como atributo
+    testX = testX.drop('Especie', axis=1)
+
+
     print(testX.head(5))
     clf = pickle.load(open(model, 'rb'))
     predictions = clf.predict(testX)
