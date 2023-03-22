@@ -1,0 +1,4 @@
+
+{'n_iteracion': 20, 'fScoreMacro': 0.9665831244778613, 'fScoreMicro': 0.9666666666666667, 'fScoreWeighted': 0.9665831244778613, 'precision': 1.0, 'recall': 0.9, 'k_neighbors': 1, 'valorD': 1, 'w': 'distance'}
+{'n_iteracion': 20, 'fScoreMacro': 0.9665831244778613, 'fScoreMicro': 0.9666666666666667, 'fScoreWeighted': 0.9665831244778613, 'precision': 1.0, 'recall': 0.9, 'k_neighbors': 1, 'valorD': 1, 'w': 'distance'}
+{'n_iteracion': 20, 'fScoreMacro': 0.9665831244778613, 'fScoreMicro': 0.9666666666666667, 'fScoreWeighted': 0.9665831244778613, 'precision': 1.0, 'recall': 0.9, 'k_neighbors': 1, 'valorD': 1, 'w': 'distance'}
