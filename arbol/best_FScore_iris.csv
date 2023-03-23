@@ -1,4 +1,0 @@
-
-{'n_iteracion': 5, 'fScoreMacro': 0.9326599326599326, 'fScoreMicro': 0.9333333333333333, 'fScoreWeighted': 0.9326599326599326, 'precision': 0.8333333333333334, 'recall': 1.0, 'max_depth': '3', 'min_samples_leaf': '1'}
-{'n_iteracion': 5, 'fScoreMacro': 0.9326599326599326, 'fScoreMicro': 0.9333333333333333, 'fScoreWeighted': 0.9326599326599326, 'precision': 0.8333333333333334, 'recall': 1.0, 'max_depth': '3', 'min_samples_leaf': '1'}
-{'n_iteracion': 5, 'fScoreMacro': 0.9326599326599326, 'fScoreMicro': 0.9333333333333333, 'fScoreWeighted': 0.9326599326599326, 'precision': 0.8333333333333334, 'recall': 1.0, 'max_depth': '3', 'min_samples_leaf': '1'}

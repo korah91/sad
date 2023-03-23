@@ -21,14 +21,15 @@ from sklearn.neighbors import KNeighborsClassifier
 k=1
 d=1
 p='./'
-f="iris.csv"
+f="datasetForTheExam_SubGrupo1.csv"
 oFile="output.out"
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print('ARGV   :',sys.argv[1:])
     try:
-        options,remainder = getopt.getopt(sys.argv[1:],'k:K:d:D:s',['k=','K=','d=','D=','s='])
+        options,remainder = getopt.getopt(sys.argv[1:],'k:K:d:D:s:',['k=','K=','d=','D=','s='])
+        
 
     except getopt.GetoptError as err:
         print('ERROR:',err)
@@ -46,6 +47,7 @@ if __name__ == '__main__':
             D = arg
         elif opt == '-s':
             s = arg
+        
     if p == './':
         iFile=p+str(f)
     else:
@@ -73,12 +75,13 @@ if __name__ == '__main__':
     
     # Se introducen los nombres de las columnas
     ml_dataset = ml_dataset[
-        ['Largo de sepalo','Ancho de sepalo','Largo de petalo','Ancho de petalo','Especie']]
+        ['Area', 'Perimeter', 'Compactness','kernelLength','KernelWidth','AsymmetryCoeff','KernelGrooveLength','Class']
+    ]
 
     # Se guardan los nombres de las columnas de valores categóricos
-    categorical_features = ['Especie']
+    categorical_features = []
     # Se guardan los nombres de las columnas de valores numericos
-    numerical_features = ['Largo de sepalo','Ancho de sepalo','Largo de petalo','Ancho de petalo']
+    numerical_features = ['Area', 'Perimeter', 'Compactness','kernelLength','KernelWidth','AsymmetryCoeff','KernelGrooveLength','Class']
     text_features = []
     for feature in categorical_features:
         ml_dataset[feature] = ml_dataset[feature].apply(coerce_to_unicode)
@@ -91,16 +94,16 @@ if __name__ == '__main__':
                 hasattr(ml_dataset[feature].dtype, 'base') and ml_dataset[feature].dtype.base == np.dtype('M8[ns]')):
             ml_dataset[feature] = datetime_to_epoch(ml_dataset[feature])
         else:
-            ml_dataset[feature] = ml_dataset[feature].astype('double')
+            ml_dataset[feature] = ml_dataset[feature].astype(str).str.strip("\"").str.replace(',', '.').astype('double')
 
 
     # Los valores posibles de la clase a predecir Especie. 
     # Puede ser de 3 clases
-    target_map = {'Iris-versicolor': 0, 'Iris-setosa': 1, 'Iris-virginica': 2}
+    target_map = {'1.0': 0, '2.0': 1, '3.0': 2}
 
     # Columna que se utilizará
-    ml_dataset['__target__'] = ml_dataset['Especie'].map(str).map(target_map)
-    del ml_dataset['Especie']
+    ml_dataset['__target__'] = ml_dataset['Class'].map(str).map(target_map)
+    del ml_dataset['Class']
 
     # Se borran las filas en las que la clase a predecir no aparezca
     ml_dataset = ml_dataset[~ml_dataset['__target__'].isnull()]
@@ -108,7 +111,7 @@ if __name__ == '__main__':
     print(ml_dataset.head(5))
 
     # Se crean las particiones de Train/Test
-    train, test = train_test_split(ml_dataset,test_size=0.2,random_state=42,stratify=ml_dataset[['__target__']])
+    train, test = train_test_split(ml_dataset,test_size=0.2,random_state=1,stratify=ml_dataset[['__target__']])
     print(train.head(5))
     print(train['__target__'].value_counts())
     print(test['__target__'].value_counts())
@@ -116,6 +119,7 @@ if __name__ == '__main__':
     # Lista con los atributos que cuando faltan en una instancia hagan que se tenga que borrar
     drop_rows_when_missing = []
 
+    '''
     # Lista con los atributos que cuando faltan en una instancia se tenga que corregir haciendo la media, mediana, etc. del resto
     impute_when_missing = [{'feature': 'Largo de sepalo', 'impute_with': 'MEAN'},
                            {'feature': 'Ancho de sepalo', 'impute_with': 'MEAN'},
@@ -145,12 +149,15 @@ if __name__ == '__main__':
         test[feature['feature']] = test[feature['feature']].fillna(v)
         print('Imputed missing values in feature %s with value %s' % (feature['feature'], coerce_to_unicode(v)))
 
-
+    '''
     # Lista con los métodos para escalar cada atributo numerico 
-    rescale_features = {'Largo de sepalo': 'AVGSTD', 
-                        'Ancho de sepalo': 'AVGSTD', 
-                        'Largo de petalo': 'AVGSTD',
-                        'Ancho de petalo': 'AVGSTD'}
+    rescale_features = {'Area': 'AVGSTD', 
+                        'Perimeter': 'AVGSTD', 
+                        'Compactness': 'AVGSTD',
+                        'kernelLength': 'AVGSTD',
+                        'KernelWidth': 'AVGSTD',
+                        'AsymmetryCoeff': 'AVGSTD',
+                        'KernelGrooveLength': 'AVGSTD'}
     
     # Se reescala
     for (feature_name, rescale_method) in rescale_features.items():
@@ -192,7 +199,7 @@ if __name__ == '__main__':
     # El undersampling consiste en borrar instancias de la clase dominante para equilibrar el dataset
 
     # Utilizamos un dict como sampling strategy
-    sampling_strategy = {0: 10, 1: 10, 2: 10}
+    sampling_strategy = {0: 2, 1: 2, 2: 2}
     undersample = RandomUnderSampler(sampling_strategy=sampling_strategy)
 
     # Se reemplazan los conjuntos Train/Test con unos conjuntos a los que se les ha realizado undersampling
@@ -211,7 +218,7 @@ if __name__ == '__main__':
     fScoresWeighted = []
 
     # Escribo las columnas en el fichero
-    with open('./knn/iris_KNN.csv', 'w') as csvfile:
+    with open('./knn/examenKNN.csv', 'w') as csvfile:
         filewriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
         filewriter.writerow(['n_iteracion', 'fScoreMacro', 'fScoreMicro', 'fScoreWeighted', 'precision', 'recall', 'k_neighbors', 'valorD', 'w'])
     
@@ -286,21 +293,15 @@ if __name__ == '__main__':
                     # matriz_confusion = confusion_matrix(testYUnder, predictions, labels=[1,0])
 
                     # Escribo en el fichero los resultados
-                    with open('./knn/iris_KNN.csv', 'a') as csvfile:
+                    with open('./knn/examenKNN.csv', 'a') as csvfile:
                         filewriter = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
                         filewriter.writerow([iteracion['n_iteracion'], iteracion['fScoreMacro'], 
                                             iteracion['fScoreMicro'], iteracion['fScoreWeighted'], 
                                             iteracion['precision'], iteracion['recall'],
                                             iteracion['k_neighbors'], iteracion['valorD'], 
                                             iteracion['w']])
-                    '''
-                    for key in iteracion:
-                        if (os.listdir("./knn") == []):
-                            file = open("./knn/santander_KNN.csv", "w")
-                        else:
-                            file = open("./knn/santander_KNN.csv", "a")
-                        file.write(str(iteracion[key]) + "\n")
-                    '''
+
+                    
                     #print(f1_score(testYUnder, predictions, average=None))
                     #print(classification_report(testYUnder,predictions))
                     #print(confusion_matrix(testYUnder, predictions, labels=[1,0]))
@@ -314,38 +315,45 @@ if __name__ == '__main__':
     for iteracion in iteraciones:
         # Si estoy en el modelo con el mejor fScoreMacro
         if iteracion['fScoreMacro'] == fScoreMacro_max:
-            mejorMacro = str(iteracion)
+            mejorMacro = iteracion
         # Si estoy en el modelo con el mejor fScoreMicro
         if iteracion['fScoreMicro'] == fScoreMicro_max:
-            mejorMicro = str(iteracion)
+            mejorMicro = iteracion
         # Si estoy en el modelo con el mejor fScoreWeighted
         if iteracion['fScoreWeighted'] == fScoreWeighted_max:
-            mejorWeighted = str(iteracion)
+            mejorWeighted = iteracion
 
     # Se escriben los mejores modelos segun el tipo de fScore
-    f = open("./knn/best_FScore_iris.csv", "w")
-    f.write("\n" + mejorMacro + "\n" + mejorMicro + "\n" + mejorWeighted)
+    f = open("./knn/best_FSCORE_examenKNN.csv", "w")
+    f.write("\nMacroFscore" + str(mejorMacro) + "\nMicroFscore" + str(mejorMicro) + "\nWeightedFscore" + str(mejorWeighted))
+
+
 
 
 # Se guarda el modelo con el mejor fScore
 import pickle
-nombreModel = "modeloKNNIris.sav"
+nombreModel = "modeloKNNexamen.sav"
 
 # Dependiendo del parametro -score introducido se guarda un modelo u otro
 if(s == "macro"):
     valorK = mejorMacro['k_neighbors']
     w = mejorMacro['w']
     valorD = mejorMacro['valorD']
+    print("Se guarda el mejor modelo segun la macro Fscore")
 elif (s == 'micro'):
     valorK = mejorMicro['k_neighbors']
     w = mejorMicro['w']
     valorD = mejorMicro['valorD']
+    print("Se guarda el mejor modelo segun la micro Fscore")
 elif (s == 'weighted'):
     valorK = mejorWeighted['k_neighbors']
     w = mejorWeighted['w']
     valorD = mejorWeighted['valorD']
+    print("Se guarda el mejor modelo segun la weighted Fscore")
     
 # Se crea el modelo a guardar
+# El modelo sera el mejor segun la fscore elegida
+
 clf = KNeighborsClassifier(n_neighbors = valorK, weights = w, algorithm = "auto", leaf_size = 30, p = valorD)
 # Se modifica el metodo de utilizar los pesos de KNN
 clf.class_weight = "balanced"
@@ -356,4 +364,5 @@ clf.fit(trainXUnder, trainYUnder)
 saved_model = pickle.dump(clf, open(nombreModel,'wb'))
 print('Modelo guardado correctamente empleando Pickle')
       
+
 print("bukatu da")

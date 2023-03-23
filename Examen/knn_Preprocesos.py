@@ -28,7 +28,7 @@ oFile="output.out"
 if __name__ == '__main__':
     print('ARGV   :',sys.argv[1:])
     try:
-        options,remainder = getopt.getopt(sys.argv[1:],'k:K:d:D:s',['k=','K=','d=','D=','s='])
+        options,remainder = getopt.getopt(sys.argv[1:],'k:K:d:D:s:',['k=','K=','d=','D=','s='])
         
 
     except getopt.GetoptError as err:
@@ -310,17 +310,17 @@ if __name__ == '__main__':
     for iteracion in iteraciones:
         # Si estoy en el modelo con el mejor fScoreMacro
         if iteracion['fScoreMacro'] == fScoreMacro_max:
-            mejorMacro = str(iteracion)
+            mejorMacro = iteracion
         # Si estoy en el modelo con el mejor fScoreMicro
         if iteracion['fScoreMicro'] == fScoreMicro_max:
-            mejorMicro = str(iteracion)
+            mejorMicro = iteracion
         # Si estoy en el modelo con el mejor fScoreWeighted
         if iteracion['fScoreWeighted'] == fScoreWeighted_max:
-            mejorWeighted = str(iteracion)
+            mejorWeighted = iteracion
 
     # Se escriben los mejores modelos segun el tipo de fScore
     f = open("./knn/best_FScore_iris.csv", "w")
-    f.write("\n" + mejorMacro + "\n" + mejorMicro + "\n" + mejorWeighted)
+    f.write("\nMacroFscore" + str(mejorMacro) + "\nMicroFscore" + str(mejorMicro) + "\nWeightedFscore" + str(mejorWeighted))
 
 
 
@@ -334,16 +334,21 @@ if(s == "macro"):
     valorK = mejorMacro['k_neighbors']
     w = mejorMacro['w']
     valorD = mejorMacro['valorD']
+    print("Se guarda el mejor modelo segun la macro Fscore")
 elif (s == 'micro'):
     valorK = mejorMicro['k_neighbors']
     w = mejorMicro['w']
     valorD = mejorMicro['valorD']
+    print("Se guarda el mejor modelo segun la micro Fscore")
 elif (s == 'weighted'):
     valorK = mejorWeighted['k_neighbors']
     w = mejorWeighted['w']
     valorD = mejorWeighted['valorD']
+    print("Se guarda el mejor modelo segun la weighted Fscore")
     
 # Se crea el modelo a guardar
+# El modelo sera el mejor segun la fscore elegida
+
 clf = KNeighborsClassifier(n_neighbors = valorK, weights = w, algorithm = "auto", leaf_size = 30, p = valorD)
 # Se modifica el metodo de utilizar los pesos de KNN
 clf.class_weight = "balanced"

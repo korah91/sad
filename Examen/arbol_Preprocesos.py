@@ -30,7 +30,7 @@ oFile="output.out"
 if __name__ == '__main__':
     print('ARGV   :',sys.argv[1:])
     try:
-        options,remainder = getopt.getopt(sys.argv[1:],'d:D:m:M:s',['d=','D=','m=','M=','s='])
+        options,remainder = getopt.getopt(sys.argv[1:],'d:D:m:M:s:',['d=','D=','m=','M=','s='])
 
     except getopt.GetoptError as err:
         print('ERROR:',err)
@@ -273,8 +273,8 @@ if __name__ == '__main__':
                             'fScoreWeighted': f1_score(testYUnder, predictions, average='weighted'),  
                             'precision': precision,
                             'recall': recall,       
-                            'max_depth': d,
-                            'min_samples_leaf': m,
+                            'max_depth': valorD,
+                            'min_samples_leaf': valorM,
                             }
             
             # Guardo los resultados de esta iteracion
@@ -312,17 +312,17 @@ if __name__ == '__main__':
     for iteracion in iteraciones:
         # Si estoy en el modelo con el mejor fScoreMacro
         if iteracion['fScoreMacro'] == fScoreMacro_max:
-            mejorMacro = str(iteracion)
+            mejorMacro = iteracion
         # Si estoy en el modelo con el mejor fScoreMicro
         if iteracion['fScoreMicro'] == fScoreMicro_max:
-            mejorMicro = str(iteracion)
+            mejorMicro = iteracion
         # Si estoy en el modelo con el mejor fScoreWeighted
         if iteracion['fScoreWeighted'] == fScoreWeighted_max:
-            mejorWeighted = str(iteracion)
+            mejorWeighted = iteracion
 
     # Se escriben los mejores modelos segun el tipo de fScore
     f = open("./arbol/best_FScore_iris.csv", "w")
-    f.write("\n" + mejorMacro + "\n" + mejorMicro + "\n" + mejorWeighted)
+    f.write("\nMacroFscore" + str(mejorMacro) + "\nMicroFscore" + str(mejorMicro) + "\nWeightedFscore" + str(mejorWeighted))
 
 
 # Se guarda el modelo con el mejor fScore
@@ -333,20 +333,27 @@ nombreModel = "modeloarbolIris.sav"
 if(s == "macro"):
     valorD = mejorMacro['max_depth']
     valorM = mejorMacro['min_samples_leaf']
+    print("Se guarda el mejor modelo segun la macro Fscore")
 elif (s == "micro"):
     valorD = mejorMicro['max_depth']
     valorM = mejorMicro['min_samples_leaf']
+    print("Se guarda el mejor modelo segun la micro Fscore")
+
 elif (s == "weighted"):
     valorD = mejorWeighted['max_depth']
     valorM = mejorWeighted['min_samples_leaf']
+    print("Se guarda el mejor modelo segun la weighted Fscore")
+
     
 # Se crea el modelo a guardar
+# El modelo sera el mejor segun la fscore elegida
+
 clf = tree.DecisionTreeClassifier(
     random_state=1,
     criterion='gini',
     splitter='best',
-    max_depth=valorD,
-    min_samples_leaf=valorM
+    max_depth=int(valorD),
+    min_samples_leaf=int(valorM)
     )
 # Se modifica el metodo de utilizar los pesos de KNN
 clf.class_weight = "balanced"

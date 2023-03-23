@@ -665,7 +665,7 @@ if __name__ == '__main__':
     # Explica lo que se hace en este paso
     # Se realiza undersampling con la funcion de la libreria imbalanced-learn.
     # El undersampling consiste en borrar instancias de la clase dominante para equilibrar el dataset
-    undersample = RandomUnderSampler(sampling_strategy=0.5)#la mayoria va a estar representada el doble de veces
+    undersample = RandomUnderSampler(sampling_strategy=0.5)
 
     # Se reemplazan los conjuntos Train/Test con unos conjuntos a los que se les ha realizado undersampling
     trainXUnder,trainYUnder = undersample.fit_resample(trainX,trainY)
@@ -776,7 +776,29 @@ if __name__ == '__main__':
 
     for iteracion in iteraciones:
         if iteracion['fScore'] == fScore_max:
+            valorK = iteracion['k_neighbors']
+            w = itearcion['w']
+            valorD = iteracion['valorD']
+
             f = open("./knn/best_FScore_santander.csv", "w")
             f.write("\n" + str(iteracion))
 
-print("bukatu da")
+
+    # Se guarda el modelo con el mejor fScore
+    import pickle
+    nombreModel = "modelo_knnSantander.sav"
+        
+    # Se crea el modelo a guardar
+    # El modelo sera el mejor segun la fscore elegida
+
+    clf = KNeighborsClassifier(n_neighbors = valorK, weights = w, algorithm = "auto", leaf_size = 30, p = valorD)
+    # Se modifica el metodo de utilizar los pesos de KNN
+    clf.class_weight = "balanced"
+    # Finalmente, se entrena el modelo con la particion de trainUndersampled
+    clf.fit(trainXUnder, trainYUnder)
+
+
+    saved_model = pickle.dump(clf, open(nombreModel,'wb'))
+    print('Modelo guardado correctamente empleando Pickle')
+        
+    print("bukatu da")
