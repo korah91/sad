@@ -1,0 +1,4 @@
+
+MacroFscore{'n_iteracion': 2, 'fScoreMacro': 0.9333333333333332, 'fScoreMicro': 0.9333333333333333, 'fScoreWeighted': 0.9333333333333333, 'precision': 0.9, 'recall': 0.9, 'max_depth': 4, 'min_samples_leaf': 1}
+MicroFscore{'n_iteracion': 3, 'fScoreMacro': 0.9326599326599326, 'fScoreMicro': 0.9333333333333333, 'fScoreWeighted': 0.9326599326599326, 'precision': 0.8333333333333334, 'recall': 1.0, 'max_depth': 4, 'min_samples_leaf': 2}
+WeightedFscore{'n_iteracion': 2, 'fScoreMacro': 0.9333333333333332, 'fScoreMicro': 0.9333333333333333, 'fScoreWeighted': 0.9333333333333333, 'precision': 0.9, 'recall': 0.9, 'max_depth': 4, 'min_samples_leaf': 1}
